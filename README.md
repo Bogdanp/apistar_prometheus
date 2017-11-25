@@ -70,4 +70,5 @@ for licensing details.
 [Prometheus]: https://prometheus.io/
 [API Star]: https://github.com/encode/apistar/
 [pipenv]: https://docs.pipenv.org
+[prometheus_client]: https://github.com/prometheus/client_python
 [LICENSE]: https://github.com/Bogdanp/apistar_prometheus/blob/master/LICENSE
