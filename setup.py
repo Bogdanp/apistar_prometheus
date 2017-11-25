@@ -25,8 +25,8 @@ setup(
     long_description="Visit https://github.com/Bogdanp/apistar_prometheus for more information.",
     packages=["apistar_prometheus"],
     include_package_data=True,
-    install_requires={
-        "apistar": ">=0.3",
-        "prometheus-client": ">=0.0.20",
-    },
+    install_requires=[
+        "apistar>=0.3",
+        "prometheus-client>=0.0.20",
+    ],
 )
