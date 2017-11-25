@@ -9,4 +9,4 @@ install:
 script:
   - PYTHONPATH=. py.test
 after_success:
-  - CODECLIMATE_REPO_TOKEN=84e0a7c0f0ba45cea6c724196d98f5aeda05a41167b40940de65528e47c28290 codeclimate-test-reporter
+  - CODECLIMATE_REPO_TOKEN=ba6639c8a630968e3d81bba3bd517d1845c636e4a56e726d9771c72262124598 codeclimate-test-reporter
