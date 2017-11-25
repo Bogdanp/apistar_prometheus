@@ -5,6 +5,8 @@ from prometheus_client import CONTENT_TYPE_LATEST, CollectorRegistry, generate_l
 
 class PlaintextRenderer(Renderer):
     def render(self, data: http.ResponseData) -> bytes:
+        if isinstance(data, str):
+            return data.encode("utf-8")
         return data
 
 
