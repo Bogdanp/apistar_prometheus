@@ -61,6 +61,21 @@ app = App(
 )
 ```
 
+### Multiprocess mode
+
+The default configuration assumes a single multi-threaded worker
+process.  To expose metrics in a multiprocess configuration (eg. using
+gunicorn), set the `prometheus_multiprocess_dir` environment variable
+and use the `expose_metrics_multiprocess` handler.
+
+``` python
+routes = [
+    # ...,
+    Route("/metrics", "GET", prometheus_component.expose_metrics_multiprocess),
+]
+```
+
+
 ## License
 
 apistar_prometheus is licensed under Apache 2.0.  Please see [LICENSE]

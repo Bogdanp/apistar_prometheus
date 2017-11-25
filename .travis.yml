@@ -7,6 +7,7 @@ install:
   - pipenv install --dev
   - pip install -I "coverage>4.0,<4.4"
 script:
+  - PYTHONPATH=. py.test tests_multiprocess
   - PYTHONPATH=. py.test
 after_success:
   - CODECLIMATE_REPO_TOKEN=ba6639c8a630968e3d81bba3bd517d1845c636e4a56e726d9771c72262124598 codeclimate-test-reporter
