@@ -1,8 +1,8 @@
 # apistar_prometheus
 
 [![Build Status](https://travis-ci.org/Bogdanp/apistar_prometheus.svg?branch=master)](https://travis-ci.org/Bogdanp/apistar_prometheus)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/d20f010978828b7530dd/test_coverage)](https://codeclimate.com/github/Bogdanp/apistar_prometheus/test_coverage)
-[![Maintainability](https://api.codeclimate.com/v1/badges/d20f010978828b7530dd/maintainability)](https://codeclimate.com/github/Bogdanp/apistar_prometheus/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/bf3853435dc643c96208/test_coverage)](https://codeclimate.com/github/Bogdanp/apistar_prometheus/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/bf3853435dc643c96208/maintainability)](https://codeclimate.com/github/Bogdanp/apistar_prometheus/maintainability)
 [![PyPI version](https://badge.fury.io/py/apistar-prometheus.svg)](https://badge.fury.io/py/apistar-prometheus)
 
 [Prometheus] metrics for [API Star] apps.
