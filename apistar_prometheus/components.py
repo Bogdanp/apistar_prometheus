@@ -24,20 +24,23 @@ REQUESTS_INPROGRESS = Gauge(
 class Prometheus:
     state = local()
 
-    def track_request_start(self, method, handler):
+    def track_request_start(self, method, handler=None):
         Prometheus.state.start_time = time.monotonic()
 
-        handler_name = "%s.%s" % (handler.__module__, handler.__name__)
+        handler_name = "<builtin>"
+        if handler is not None:
+            handler_name = "%s.%s" % (handler.__module__, handler.__name__)
+
         REQUESTS_INPROGRESS.labels(method, handler_name).inc()
 
     def track_request_end(self, method, handler, response):
         handler_name = "<builtin>"
         if handler is not None:
             handler_name = "%s.%s" % (handler.__module__, handler.__name__)
-            duration = time.monotonic() - Prometheus.state.start_time
-            del Prometheus.state.start_time
-            REQUEST_DURATION.labels(method, handler_name).observe(duration)
 
+        duration = time.monotonic() - Prometheus.state.start_time
+        del Prometheus.state.start_time
+        REQUEST_DURATION.labels(method, handler_name).observe(duration)
         REQUEST_COUNT.labels(method, handler_name, response.status_code).inc()
         REQUESTS_INPROGRESS.labels(method, handler_name).dec()
 
@@ -55,4 +58,7 @@ class PrometheusHooks:
         prometheus.track_request_end(method, route and route.handler, response)
         return response
 
-    on_error = on_response
+    def on_error(self, prometheus: Prometheus, method: http.Method, response: http.Response) -> http.Response:
+        prometheus.track_request_start(method)
+        prometheus.track_request_end(method, None, response)
+        return response
