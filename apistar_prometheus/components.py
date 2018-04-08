@@ -1,7 +1,6 @@
 import time
 
-from apistar import http
-from http import HTTPStatus
+from apistar import Component, Route, http
 from prometheus_client import Counter, Gauge, Histogram
 from threading import local
 
@@ -23,26 +22,37 @@ REQUESTS_INPROGRESS = Gauge(
 
 
 class Prometheus:
-    def __init__(self):
-        self.data = local()
+    state = local()
 
     def track_request_start(self, method, handler):
-        self.data.start_time = time.monotonic()
+        Prometheus.state.start_time = time.monotonic()
 
         handler_name = "%s.%s" % (handler.__module__, handler.__name__)
         REQUESTS_INPROGRESS.labels(method, handler_name).inc()
 
-    def track_request_end(self, method, handler, ret):
-        status = 200
-        if isinstance(ret, http.Response):
-            status = HTTPStatus(ret.status).value
-
+    def track_request_end(self, method, handler, response):
         handler_name = "<builtin>"
         if handler is not None:
             handler_name = "%s.%s" % (handler.__module__, handler.__name__)
-            duration = time.monotonic() - self.data.start_time
-            del self.data.start_time
+            duration = time.monotonic() - Prometheus.state.start_time
+            del Prometheus.state.start_time
             REQUEST_DURATION.labels(method, handler_name).observe(duration)
 
-        REQUEST_COUNT.labels(method, handler_name, status).inc()
+        REQUEST_COUNT.labels(method, handler_name, response.status_code).inc()
         REQUESTS_INPROGRESS.labels(method, handler_name).dec()
+
+
+class PrometheusComponent(Component):
+    def resolve(self) -> Prometheus:
+        return Prometheus()
+
+
+class PrometheusHooks:
+    def on_request(self, prometheus: Prometheus, method: http.Method, route: Route) -> None:
+        prometheus.track_request_start(method, route and route.handler)
+
+    def on_response(self, prometheus: Prometheus, method: http.Method, route: Route, response: http.Response) -> http.Response:
+        prometheus.track_request_end(method, route and route.handler, response)
+        return response
+
+    on_error = on_response

@@ -1,26 +1,17 @@
-from apistar import Response, annotate, http
-from apistar.renderers import Renderer
+from apistar.http import Response
 from prometheus_client import CONTENT_TYPE_LATEST, CollectorRegistry, generate_latest, multiprocess
 
-
-class PlaintextRenderer(Renderer):
-    def render(self, data: http.ResponseData) -> bytes:
-        if isinstance(data, str):
-            return data.encode("utf-8")
-        return data
+#: Micro-optimization to avoid allocating a new dict on every metrics
+#: request.  Response itself copies the headers its given so this
+#: shouldn't be a problem.
+_HEADERS = {"content-type": CONTENT_TYPE_LATEST}
 
 
-@annotate(renderers=[PlaintextRenderer()])
 def expose_metrics():
-    return Response(generate_latest(), headers={
-        "content-type": CONTENT_TYPE_LATEST,
-    })
+    return Response(generate_latest(), headers=_HEADERS)
 
 
-@annotate(renderers=[PlaintextRenderer()])
 def expose_metrics_multiprocess():
     registry = CollectorRegistry()
     multiprocess.MultiProcessCollector(registry)
-    return Response(generate_latest(registry), headers={
-        "content-type": CONTENT_TYPE_LATEST,
-    })
+    return Response(generate_latest(registry), headers=_HEADERS)

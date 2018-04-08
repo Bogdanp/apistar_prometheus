@@ -1,38 +1,29 @@
-import apistar_prometheus
-
-from apistar import Component, Route, hooks
-from apistar.frameworks.wsgi import WSGIApp as App
+from apistar import App, Route
 from apistar.test import TestClient
+from apistar_prometheus import PrometheusComponent, PrometheusHooks, expose_metrics
 
 
 def index():
     return {}
 
 
-components = [
-    Component(apistar_prometheus.Prometheus, preload=True),
-]
-
 routes = [
-    Route("/", "GET", index),
-    Route("/metrics", "GET", apistar_prometheus.expose_metrics),
+    Route("/", method="GET", handler=index),
+    Route("/metrics", method="GET", handler=expose_metrics),
 ]
 
-settings = {
-    "BEFORE_REQUEST": [
-        apistar_prometheus.before_request,
-        hooks.check_permissions,
-    ],
-    "AFTER_REQUEST": [
-        hooks.render_response,
-        apistar_prometheus.after_request,
-    ],
-}
+components = [
+    PrometheusComponent(),
+]
+
+event_hooks = [
+    PrometheusHooks(),
+]
 
 app = App(
-    components=components,
     routes=routes,
-    settings=settings,
+    components=components,
+    event_hooks=event_hooks,
 )
 
 

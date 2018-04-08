@@ -1,18 +1,13 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
 prometheus-client = "*"
-apistar = "*"
-
+apistar = {git = "https://github.com/encode/apistar.git", editable = true, ref = "level-up"}
 
 [dev-packages]
-
 twine = "*"
 pytest = "*"
 pytest-cov = "*"

@@ -4,11 +4,9 @@ dir_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "prom")
 os.makedirs(dir_path, exist_ok=True)
 os.environ["prometheus_multiproc_dir"] = dir_path
 
-import apistar_prometheus
-
-from apistar import Component, Route, hooks
-from apistar.frameworks.wsgi import WSGIApp as App
+from apistar import App, Route
 from apistar.test import TestClient
+from apistar_prometheus import PrometheusComponent, PrometheusHooks, expose_metrics_multiprocess
 
 
 def index():
@@ -16,29 +14,22 @@ def index():
 
 
 components = [
-    Component(apistar_prometheus.Prometheus, preload=True),
+    PrometheusComponent(),
 ]
 
 routes = [
-    Route("/", "GET", index),
-    Route("/metrics", "GET", apistar_prometheus.expose_metrics_multiprocess),
+    Route("/", method="GET", handler=index),
+    Route("/metrics", method="GET", handler=expose_metrics_multiprocess),
 ]
 
-settings = {
-    "BEFORE_REQUEST": [
-        apistar_prometheus.before_request,
-        hooks.check_permissions,
-    ],
-    "AFTER_REQUEST": [
-        hooks.render_response,
-        apistar_prometheus.after_request,
-    ],
-}
+event_hooks = [
+    PrometheusHooks(),
+]
 
 app = App(
-    components=components,
     routes=routes,
-    settings=settings,
+    components=components,
+    event_hooks=event_hooks,
 )
 
 

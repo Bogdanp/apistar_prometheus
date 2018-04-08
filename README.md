@@ -10,7 +10,7 @@
 
 ## Requirements
 
-* [API Star] 0.3+
+* [API Star] 0.4+
 * [prometheus_client] 0.0.20+
 
 
@@ -26,38 +26,26 @@ add `before_request` and `after_request` as the first and last hooks,
 respectively.
 
 ``` python
-import apistar_prometheus
-
-from apistar import Component, Route, hooks
-from apistar.frameworks.wsgi import WSGIApp as App
-
-components = [
-    Component(apistar_prometheus.Prometheus, preload=True),
-    # ...,
-]
+from apistar import App, Route
+from apistar_prometheus import PrometheusComponent, PrometheusHooks, expose_metrics
 
 routes = [
-    # ...,
-    Route("/metrics", "GET", prometheus_component.expose_metrics),
+    # ...
+    Route("/metrics", method="GET", handler=expose_metrics),
 ]
 
-settings = {
-    "BEFORE_REQUEST": [
-        prometheus_component.before_request,
-        hooks.check_permissions,
-        # ...,
-    ],
-    "AFTER_REQUEST": [
-        # ...,
-        hooks.render_response,
-        prometheus_component.after_request,
-    ],
-}
+components = [
+    PrometheusComponent(),
+]
+
+event_hooks = [
+    PrometheusHooks(),
+]
 
 app = App(
-    components=components,
     routes=routes,
-    settings=settings,
+    components=components,
+    event_hooks=event_hooks,
 )
 ```
 
@@ -69,9 +57,11 @@ gunicorn), set the `prometheus_multiprocess_dir` environment variable
 and use the `expose_metrics_multiprocess` handler.
 
 ``` python
+from apistar_prometheus import PrometheusComponent, PrometheusHooks, expose_metrics_multiprocess
+
 routes = [
     # ...,
-    Route("/metrics", "GET", prometheus_component.expose_metrics_multiprocess),
+    Route("/metrics", method="GET", handler=expose_metrics_multiprocess),
 ]
 ```
 
