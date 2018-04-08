@@ -22,10 +22,10 @@ REQUESTS_INPROGRESS = Gauge(
 
 
 class Prometheus:
-    state = local()
+    STATE = local()
 
     def track_request_start(self, method, handler=None):
-        Prometheus.state.start_time = time.monotonic()
+        Prometheus.STATE.start_time = time.monotonic()
 
         handler_name = "<builtin>"
         if handler is not None:
@@ -38,8 +38,8 @@ class Prometheus:
         if handler is not None:
             handler_name = "%s.%s" % (handler.__module__, handler.__name__)
 
-        duration = time.monotonic() - Prometheus.state.start_time
-        del Prometheus.state.start_time
+        duration = time.monotonic() - Prometheus.STATE.start_time
+        del Prometheus.STATE.start_time
         REQUEST_DURATION.labels(method, handler_name).observe(duration)
         REQUEST_COUNT.labels(method, handler_name, response.status_code).inc()
         REQUESTS_INPROGRESS.labels(method, handler_name).dec()
