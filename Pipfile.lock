@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "36d128ed2fe5a92f7551e3c99b2785061b2ace5a5c4d8863cdd8e1eff3033dd6"
+            "sha256": "8384fbc40897eb7f8112b1b88e368994d35f6d404d05ce99c81c4fd8a51d8c42"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -15,14 +15,11 @@
     },
     "default": {
         "apistar": {
-            "editable": true,
-            "git": "https://github.com/encode/apistar.git",
-            "ref": "d4490d2485ea3c5e8a71349219bdbba6dc4d60d6"
-        },
-        "apistar-prometheus": {
-            "editable": true,
-            "git": "git@github.com:Bogdanp/apistar_prometheus.git",
-            "ref": "1510be215556a76e59648f16aa3c2f8425f25292"
+            "hashes": [
+                "sha256:da2a33c5ecc996f47ffa2d53393dd764be5dc4ee85f1b06f201044dd01b2dff1"
+            ],
+            "index": "pypi",
+            "version": "==0.4"
         },
         "attrs": {
             "hashes": [

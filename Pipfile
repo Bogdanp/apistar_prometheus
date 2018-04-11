@@ -4,11 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+apistar = "==0.4"
 prometheus-client = "*"
-apistar = {git = "https://github.com/encode/apistar.git", editable = true, ref = "level-up"}
 
 [dev-packages]
-twine = "*"
+bumpversion = "*"
 pytest = "*"
 pytest-cov = "*"
-bumpversion = "*"
+twine = "*"
