@@ -2,7 +2,6 @@ import time
 
 from apistar import Component, Route, http
 from prometheus_client import Counter, Gauge, Histogram
-from threading import local
 
 REQUEST_DURATION = Histogram(
     "http_request_duration_seconds",
@@ -22,10 +21,8 @@ REQUESTS_INPROGRESS = Gauge(
 
 
 class Prometheus:
-    STATE = local()
-
     def track_request_start(self, method, handler=None):
-        Prometheus.STATE.start_time = time.monotonic()
+        self.start_time = time.monotonic()
 
         handler_name = "<builtin>"
         if handler is not None:
@@ -38,8 +35,7 @@ class Prometheus:
         if handler is not None:
             handler_name = "%s.%s" % (handler.__module__, handler.__name__)
 
-        duration = time.monotonic() - Prometheus.STATE.start_time
-        del Prometheus.STATE.start_time
+        duration = time.monotonic() - self.start_time
         REQUEST_DURATION.labels(method, handler_name).observe(duration)
         REQUEST_COUNT.labels(method, handler_name, response.status_code).inc()
         REQUESTS_INPROGRESS.labels(method, handler_name).dec()
@@ -54,7 +50,7 @@ class PrometheusHooks:
     def on_request(self, prometheus: Prometheus, method: http.Method, route: Route) -> None:
         prometheus.track_request_start(method, route and route.handler)
 
-    def on_response(self, prometheus: Prometheus, method: http.Method, route: Route, response: http.Response) -> http.Response:
+    def on_response(self, prometheus: Prometheus, method: http.Method, route: Route, response: http.Response) -> http.Response:  # noqa
         prometheus.track_request_end(method, route and route.handler, response)
         return response
 
