@@ -26,7 +26,7 @@ setup(
     packages=["apistar_prometheus"],
     include_package_data=True,
     install_requires=[
-        "apistar>=0.4,<0.5",
+        "apistar>=0.5",
         "prometheus-client>=0.0.20",
     ],
 )
